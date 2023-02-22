@@ -1,0 +1,86 @@
+import java.util.Queue;
+import java.util.LinkedList;
+
+abstract class Scheduler {
+    protected ProcessQueue processQueue;
+
+    public Scheduler(ProcessQueue processQueue) {
+        this.processQueue = processQueue;
+    }
+
+    public abstract void schedule();
+}
+
+class FirstComeFirstServedScheduler extends Scheduler {
+    private RunnableProcess runnableProcess;
+//creating to execute the function
+    public FirstComeFirstServedScheduler(ProcessQueue processQueue) {
+        super(processQueue);
+        this.runnableProcess = null;
+    }
+
+    public void schedule() {
+        if (this.runnableProcess == null && !this.processQueue.readyQ.isEmpty()) {
+            this.runnableProcess = this.processQueue.readyQ.poll();
+        }
+        if (this.runnableProcess != null) {
+            this.processQueue.runningQ.add(this.runnableProcess);
+            this.runnableProcess.run();
+            this.processQueue.runningQ.remove(this.runnableProcess);
+            this.runnableProcess = null;
+        }
+    }
+}
+
+class ProcessQueue {
+    Queue<RunnableProcess> waitQ;
+    Queue<RunnableProcess> readyQ;
+    Queue<RunnableProcess> runningQ;
+
+    public ProcessQueue() {
+        this.waitQ = new LinkedList<>();
+        this.readyQ = new LinkedList<>();
+        this.runningQ = new LinkedList<>();
+    }
+}
+
+class RunnableProcess {
+    private String name;
+    private int duration;
+
+    public RunnableProcess(String name, int duration) {
+        this.name = name;
+        this.duration = duration;
+    }
+
+    public void run() {
+        System.out.println(this.name + " started");
+        try {
+            Thread.sleep(this.duration * 1000); //process running
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//printing the name
+        System.out.println(this.name + " finished");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // giving Instantiate ProcessQueue
+        ProcessQueue processQueue = new ProcessQueue();
+
+        // giving Instantiate FirstComeFirstServedScheduler
+        FirstComeFirstServedScheduler fcfsScheduler = new FirstComeFirstServedScheduler(processQueue);
+
+        // Instantiate RunnableProcess and add it to the readyQ
+        RunnableProcess process = new RunnableProcess("Process 1", 3);
+        processQueue.readyQ.add(process);
+
+        //  we are giving Call schedule on the FCFS scheduler and time it
+        long startTime = System.currentTimeMillis();
+        fcfsScheduler.schedule();
+        long endTime = System.currentTimeMillis();
+//printing the elapsed time
+        System.out.println("Elapsed time: " + (endTime - startTime) / 1000.0 + " seconds");
+    }
