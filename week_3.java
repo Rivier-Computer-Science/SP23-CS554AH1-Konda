@@ -1,12 +1,25 @@
 import java.util.Random;
 
+/**
+ * Process class which performs some work
+ */
 class Process {
+    /**
+    * Process class which performs some work
+    */
     public void doWork(int iterations) { }
 }
 
+/**
+ * RunnableProcess class which extends the Process class
+ */
 class RunnableProcess extends Process {
     private Random random = new Random();
 
+    /**
+     * Overrides the doWork method in the Process class
+     * @param iterations number of iterations
+     */
     @Override
     public void doWork(int iterations) {
         int[] array1 = new int[iterations];
@@ -23,7 +36,10 @@ class RunnableProcess extends Process {
         System.out.println("Result: " + result);
     }
 }
-public class Main {
+/**
+ * week_3 class containing the main method
+ */
+public class week_3 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
